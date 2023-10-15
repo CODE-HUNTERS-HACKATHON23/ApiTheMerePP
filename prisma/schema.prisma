@@ -10,8 +10,61 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-generator dbml {
-  provider = "prisma-dbml-generator"
+// generator dbml {
+//   provider = "prisma-dbml-generator"
+// }
+
+generator erd {
+  provider = "prisma-erd-generator"
+  output = "./diagram.pdf"
+}
+
+model Rol {
+  IdRol Int @id
+  Nombre String
+
+  // One to many relation with Usuario
+  Usuario Usuario[]
+}
+
+model Usuario {
+  IdUsuario Int @id
+
+  // Many to one relation with Rol
+  Rol Rol @relation(fields: [IdRol], references: [IdRol])
+  IdRol Int
+
+  Usuario String
+  Correo String
+  Contrasena String
+
+  // One to one relation with Paciente
+  Paciente Paciente?
+
+  // One to one relation with Medico
+  Medico Medico?
+}
+
+model Departamento {
+  IdDepartamento Int @id
+
+  // Many to one relation with Municipio
+  Municipio Municipio[]
+
+  Nombre String
+}
+
+model Municipio {
+  IdMunicipio Int @id
+
+  // Many to one relation with Departamento
+  Departamento Departamento @relation(fields: [IdDepartamento], references: [IdDepartamento])
+  IdDepartamento Int
+
+  // Many to one relation with Paciente
+  Paciente Paciente[]
+
+  Nombre String
 }
 
 model Paciente {
@@ -20,6 +73,10 @@ model Paciente {
   // One to one relation with Usuario
   Usuario Usuario @relation(fields: [IdUsuario], references: [IdUsuario])
   IdUsuario Int @unique
+
+  // Many to one relation with Municipio
+  Municipio Municipio @relation(fields: [IdMunicipio], references: [IdMunicipio])
+  IdMunicipio Int
 
   // Many to one relation with Citas
   Citas Cita[]
@@ -30,21 +87,21 @@ model Paciente {
   // Many to one relation with Tratamiento
   Tratamiento Tratamiento[]
 
-  // Many to one relation with Departamento
-  Departamento Departamento @relation(fields: [IdDepartamento], references: [IdDepartamento])
-  IdDepartamento Int
-
-  // Many to one relation with Municipio
-  Municipio Municipio @relation(fields: [IdMunicipio], references: [IdMunicipio])
-  IdMunicipio Int
+  // Many to one relation with SignoVital
+  PacienteSignoVital PacienteSignoVital[]
 
   // One to one relation with Expediente
-  Expediente Expediente @relation(fields: [IdExpediente], references: [IdExpediente])
-  IdExpediente Int @unique
+  Expediente Expediente?
 
-  // Attributes
-  Nombre String
-  Apellido String
+  // Many to one relation with Vacunacion
+  Vacunacion Vacunacion[]
+
+  // Many to one relation with OrdenExamen
+  OrdenExamen OrdenExamen[]
+
+  Cedula String
+  Nombres String
+  Apellidos String
   Direccion String
   NumeroInss String
   Profesion String
@@ -57,40 +114,18 @@ model Paciente {
   TipoSangre String
 }
 
-model Usuario {
-  IdUsuario Int @id
-
-  // Many to one relation with Rol
-  Rol Rol @relation(fields: [IdRol], references: [IdRol])
-  IdRol Int
-
-  Correo String
-  Contrasena String
-
-  // One to one relation with Paciente
-  Paciente Paciente?
-
-  // One to one relation with Medico
-  Medico Medico?
-}
-
-// Propuesta: Evitar crear un modelo para cada rol, en su lugar crear un enum para los roles
-enum RolPropose {
-  ADMIN
-  PACIENTE
-  MEDICO
-}
-
-model Rol {
-  IdRol Int @id
-  Nombre String
-
-  Usuario Usuario[]
-}
-
 model UnidadSalud {
   IdUnidadSalud Int @id
   Nombre String
+
+  // Many to one relation with Cita
+  Cita Cita[]
+
+  // Many to one relation with Vacunas
+  Vacunacion Vacunacion[]
+
+  // Many to one relation with Consulta
+  Consulta Consulta[]
 }
 
 model Cita {
@@ -100,64 +135,52 @@ model Cita {
   Paciente Paciente @relation(fields: [IdPaciente], references: [IdPaciente])
   IdPaciente Int
 
-  IdUnidadSalud Int // Propuesta: Agregar relacion con UnidadSalud para saber a que unidad de salud pertenece la cita
+  // Many to one relation with UnidadSalud
+  UnidadSalud UnidadSalud @relation(fields: [IdUnidadSalud], references: [IdUnidadSalud])
+  IdUnidadSalud Int
 
   Fecha DateTime
   Hora DateTime
 }
 
-// TODO: Saber como se va a manejar el tema de los signos vitales
 model SignoVital {
   IdSignoVital Int @id
+  Fecha DateTime
+  Hora DateTime
+  Pulso Float
+  Temperatura Float
+  PresionArterial Float
+  FrecuenciaCardiaca Float
+  Orina String
+  Liquidos String
+  Peso Float
+  Respiracion String
+
+  // One to one relation with PacienteSignoVital
+  PacienteSignoVital PacienteSignoVital?
 }
 
 model PacienteSignoVital {
   IdPacienteSignoVital Int @id
+
+  // Many to one relation with Paciente
+  Paciente Paciente @relation(fields: [IdPaciente], references: [IdPaciente])
   IdPaciente Int
-  IdSignoVital Int
 
-  Temperatura Float
-  PresionArterial Float
-  FrecuenciaCardiaca Float
-  FrecuenciaRespiratoria Float
-  Peso Float
-  Talla Float
-  IMC Float
-  SaturacionOxigeno Float
-  Observaciones String
-}
-// ---------------------------------------------------------------
+  // One to one relation with SignoVital
+  SignoVital SignoVital @relation(fields: [IdSignoVital], references: [IdSignoVital])
+  IdSignoVital Int @unique
 
-model Departamento {
-  IdDepartamento Int @id
-
-  // Many to one relation with Paciente
-  Paciente Paciente[]
-
-  // Many to one relation with Municipio
-  Municipio Municipio[]
-
-  Nombre String
-}
-
-model Municipio {
-  IdMunicipio Int @id
-
-// Many to one relation with Departamento
-  Departamento Departamento @relation(fields: [IdDepartamento], references: [IdDepartamento])
-  IdDepartamento Int
-
-  // Many to one relation with Paciente
-  Paciente Paciente[]
-
-  Nombre String
+  // One to one relation with ConsultaSignoVital
+  ConsultaSignoVital ConsultaSignoVital?
 }
 
 model Expediente {
   IdExpediente Int @id
 
   // One to one relation with Paciente
-  Paciente Paciente?
+  Paciente Paciente @relation(fields: [IdPaciente], references: [IdPaciente])
+  IdPaciente Int @unique
 
   // Many to one relation with Emergencia
   Emergencia Emergencia[]
@@ -168,6 +191,7 @@ model Expediente {
   // Many to one relation with Consulta
   Consulta Consulta[]
 
+  NumeroExpediente String
   FechaCreacion DateTime
   FechaModificacion DateTime
 }
@@ -180,6 +204,7 @@ model Emergencia {
   Maquinaria Boolean
   EfectosTardios Boolean
   FenomenoNatural Boolean
+  AsaltOAgresion Boolean
   IntentoSuicidio Boolean
   IncendioExplosion Boolean
   Otro Boolean
@@ -201,6 +226,7 @@ model Emergencia {
   Planes String
 
   Fallecido Boolean
+  Abandono Boolean
   Alta Boolean
 
   // Many to one relation with Expediente
@@ -208,39 +234,90 @@ model Emergencia {
   IdExpediente Int
 }
 
-model HistorialClinico {
-  IdHistorialClinico Int @id
-
-  // Many to one relation with Expediente
-  Expediente Expediente @relation(fields: [IdExpediente], references: [IdExpediente])
-  IdExpediente Int
-
-  MotivoConsulta String
-  IdTipoEnfermedad Int
-}
-
-// TODO: Saber como se va a manejar el tema de las enfermedades
-// Propuesta: Crear un ENUM para las enfermedades
 model TipoEnfermedad {
   IdTipoEnfermedad Int @id
   TipoEnfermedad String
+
+  // One to many relation with Enfermedad
+  Enfermedad Enfermedad[]
 }
 
 model Enfermedad {
   IdEnfermedad Int @id
+
+  // Many to one relation with TipoEnfermedad
+  TipoEnfermedad TipoEnfermedad @relation(fields: [IdTipoEnfermedad], references: [IdTipoEnfermedad])
   IdTipoEnfermedad Int
-  Hepatitis Boolean
-  Sifilis Boolean
-  Colera Boolean
-  // AGregar mas
+
+  // Many to one relation with HistorialClinicoEnfermedad
+  HistorialClinicoEnfermedad HistorialClinicoEnfermedad[]
+
+  Nombre String
+}
+
+model Vacunacion {
+  IdVacunacion Int @id
+
+  // One to many relation with Paciente
+  Paciente Paciente @relation(fields: [IdPaciente], references: [IdPaciente])
+  IdPaciente Int
+
+  // One to many relation with UnidadSalud
+  UnidadSalud UnidadSalud @relation(fields: [IdUnidadSalud], references: [IdUnidadSalud])
+  IdUnidadSalud Int
+
+  NombreVacuna String
+  FechaVacunacion DateTime
+  FechaProximaVacunacion DateTime
+}
+
+model HistorialClinico {
+  IdHistorialClinico Int @id
+
+  // Many to one relation with Expediente
+  Expediente   Expediente @relation(fields: [IdExpediente], references: [IdExpediente])
+  IdExpediente Int
+
+  MotivoConsulta  String
+  HorasSueno      Int
+  ActividadFisica String
+  Alimentacion    String
+
+  Tabaco                                String
+  Drogas                                String
+  Farmacos                              String
+  HistoriaEnfermedadActual              String
+  EnfermedadesInfectoContagiosasPrevias String
+  EnfermedadesCronicas                  String
+  CirugiasPreviasRealizadas             String
+  Hospitalizaciones                     String
+  AspectoGeneral                        String
+  PielYMucosas                          String
+  CabezaYCuello                         String
+  Torax                                 String
+
+  // One to one relation with HistorialClinicoEnfermedad
+  HistorialClinicoEnfermedad HistorialClinicoEnfermedad?
 }
 
 model HistorialClinicoEnfermedad {
   IdHistorialClinicoEnfermedad Int @id
-  IdHistorialClinico Int
-  IdEnfermedad Int
+
+  // One to one relation with HistorialClinico
+  HistorialClinico HistorialClinico @relation(fields: [IdHistorialClinico], references: [IdHistorialClinico])
+  IdHistorialClinico Int @unique
+
+  // Many to many relation with Enfermedad
+  Enfermedad Enfermedad[]
 }
-// ---------------------------------------------------------------
+
+model Especialidad {
+  IdEspecialidad Int @id
+  Nombre String
+
+  // Many to one relation with Medico
+  Medico Medico[]
+}
 
 model Medico {
   IdMedico Int @id
@@ -252,8 +329,9 @@ model Medico {
   // Many to one relation with Consulta
   Consulta Consulta[]
 
-  // Propuesta: Agregar relacion con UnidadSalud para saber a que unidad de salud pertenece el medico
-  IdUnidadSalud Int
+  // Many to one relation with Especialidad
+  Especialidad Especialidad @relation(fields: [IdEspecialidad], references: [IdEspecialidad])
+  IdEspecialidad Int
 }
 
 model Consulta {
@@ -271,6 +349,13 @@ model Consulta {
   Expediente Expediente @relation(fields: [IdExpediente], references: [IdExpediente])
   IdExpediente Int
 
+  // Many to one relation with Unidad Salud
+  UnidadSalud UnidadSalud @relation(fields: [IdUnidadSalud], references: [IdUnidadSalud])
+  IdUnidadSalud Int
+
+  // One to one relation with ConsultaSignoVital
+  ConsultaSignoVital ConsultaSignoVital?
+
   Fecha DateTime
   Evaluacion String
   Planes String
@@ -278,12 +363,38 @@ model Consulta {
 
 model ConsultaSignoVital {
   IdConsultaSignoVital Int @id
-  IdConsulta Int
+
+  // One to one relation with Consulta
+  Consulta Consulta @relation(fields: [IdConsulta], references: [IdConsulta])
+  IdConsulta Int @unique
+
+  // One to one relation with PacienteSignoVital
+  PacienteSignoVital PacienteSignoVital @relation(fields: [IdPacienteSignoVital], references: [IdPacienteSignoVital])
+  IdPacienteSignoVital Int @unique
 }
 
 model Examen {
   IdExamen Int @id
+  Nombre String
+
+  // One to many relation with OrdenExamen
+  OrdenExamen OrdenExamen[]
 }
+
+model OrdenExamen {
+  IdOrdenExamen Int @id
+
+  //One to many relation with Paciente
+  Paciente Paciente @relation(fields: [IdPaciente], references: [IdPaciente])
+  IdPaciente Int
+
+  // One to many relation with Examen
+  Examen Examen @relation(fields: [IdExamen], references: [IdExamen])
+  IdExamen Int
+
+  Resultado String
+}
+
 
 model Tratamiento {
   IdTratamiento Int @id
@@ -294,6 +405,7 @@ model Tratamiento {
 
   Nombre String
   UnidadTratamiento String
+  Dosis String
   FechaInicio DateTime
   FechaFin DateTime
   Frecuencia String
