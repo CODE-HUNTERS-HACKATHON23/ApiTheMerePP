@@ -1,0 +1,300 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
+model Paciente {
+  IdPaciente Int @id
+
+  // One to one relation with Usuario
+  Usuario Usuario @relation(fields: [IdUsuario], references: [IdUsuario])
+  IdUsuario Int @unique
+
+  // Many to one relation with Citas
+  Citas Cita[]
+
+  // Many to one relation with Consulta
+  Consulta Consulta[]
+
+  // Many to one relation with Tratamiento
+  Tratamiento Tratamiento[]
+
+  // Many to one relation with Departamento
+  Departamento Departamento @relation(fields: [IdDepartamento], references: [IdDepartamento])
+  IdDepartamento Int
+
+  // Many to one relation with Municipio
+  Municipio Municipio @relation(fields: [IdMunicipio], references: [IdMunicipio])
+  IdMunicipio Int
+
+  // One to one relation with Expediente
+  Expediente Expediente @relation(fields: [IdExpediente], references: [IdExpediente])
+  IdExpediente Int @unique
+
+  // Attributes
+  Nombre String
+  Apellido String
+  Direccion String
+  NumeroInss String
+  Profesion String
+  FechaNacimiento DateTime
+  LugarNacimiento String
+  Sexo String
+  Telefono String
+  NombrePadre String
+  NombreMadre String
+  TipoSangre String
+}
+
+model Usuario {
+  IdUsuario Int @id
+
+  // Many to one relation with Rol
+  Rol Rol @relation(fields: [IdRol], references: [IdRol])
+  IdRol Int
+
+  Correo String
+  Contrasena String
+
+  // One to one relation with Paciente
+  Paciente Paciente?
+
+  // One to one relation with Medico
+  Medico Medico?
+}
+
+// Propuesta: Evitar crear un modelo para cada rol, en su lugar crear un enum para los roles
+enum RolPropose {
+  ADMIN
+  PACIENTE
+  MEDICO
+}
+
+model Rol {
+  IdRol Int @id
+  Nombre String
+
+  Usuario Usuario[]
+}
+
+model UnidadSalud {
+  IdUnidadSalud Int @id
+  Nombre String
+}
+
+model Cita {
+  IdCita Int @id
+
+  // Many to one relation with Paciente
+  Paciente Paciente @relation(fields: [IdPaciente], references: [IdPaciente])
+  IdPaciente Int
+
+  IdUnidadSalud Int // Propuesta: Agregar relacion con UnidadSalud para saber a que unidad de salud pertenece la cita
+
+  Fecha DateTime
+  Hora DateTime
+}
+
+// TODO: Saber como se va a manejar el tema de los signos vitales
+model SignoVital {
+  IdSignoVital Int @id
+}
+
+model PacienteSignoVital {
+  IdPacienteSignoVital Int @id
+  IdPaciente Int
+  IdSignoVital Int
+
+  Temperatura Float
+  PresionArterial Float
+  FrecuenciaCardiaca Float
+  FrecuenciaRespiratoria Float
+  Peso Float
+  Talla Float
+  IMC Float
+  SaturacionOxigeno Float
+  Observaciones String
+}
+// ---------------------------------------------------------------
+
+model Departamento {
+  IdDepartamento Int @id
+
+  // Many to one relation with Paciente
+  Paciente Paciente[]
+
+  // Many to one relation with Municipio
+  Municipio Municipio[]
+
+  Nombre String
+}
+
+model Municipio {
+  IdMunicipio Int @id
+
+// Many to one relation with Departamento
+  Departamento Departamento @relation(fields: [IdDepartamento], references: [IdDepartamento])
+  IdDepartamento Int
+
+  // Many to one relation with Paciente
+  Paciente Paciente[]
+
+  Nombre String
+}
+
+model Expediente {
+  IdExpediente Int @id
+
+  // One to one relation with Paciente
+  Paciente Paciente?
+
+  // Many to one relation with Emergencia
+  Emergencia Emergencia[]
+
+  // Many to one relation with HistorialClinico
+  HistorialClinico HistorialClinico[]
+
+  // Many to one relation with Consulta
+  Consulta Consulta[]
+
+  FechaCreacion DateTime
+  FechaModificacion DateTime
+}
+
+model Emergencia {
+  IdEmergencia Int @id
+  VehiculoMotorizado Boolean
+  OtroTransporte Boolean
+  Caida Boolean
+  Maquinaria Boolean
+  EfectosTardios Boolean
+  FenomenoNatural Boolean
+  IntentoSuicidio Boolean
+  IncendioExplosion Boolean
+  Otro Boolean
+
+  //Lugar
+  Trabajo Boolean
+  Vivienda Boolean
+  CentroEstudio Boolean
+  CentroMedico Boolean
+  ViaPublica Boolean
+  DeporteDive Boolean
+  OtroLugar Boolean
+
+  Fecha DateTime
+  Hora DateTime
+  ResumenClinico String
+  ExamenFisico String
+  Diagnostico String
+  Planes String
+
+  Fallecido Boolean
+  Alta Boolean
+
+  // Many to one relation with Expediente
+  Expediente Expediente @relation(fields: [IdExpediente], references: [IdExpediente])
+  IdExpediente Int
+}
+
+model HistorialClinico {
+  IdHistorialClinico Int @id
+
+  // Many to one relation with Expediente
+  Expediente Expediente @relation(fields: [IdExpediente], references: [IdExpediente])
+  IdExpediente Int
+
+  MotivoConsulta String
+  IdTipoEnfermedad Int
+}
+
+// TODO: Saber como se va a manejar el tema de las enfermedades
+// Propuesta: Crear un ENUM para las enfermedades
+model TipoEnfermedad {
+  IdTipoEnfermedad Int @id
+  TipoEnfermedad String
+}
+
+model Enfermedad {
+  IdEnfermedad Int @id
+  IdTipoEnfermedad Int
+  Hepatitis Boolean
+  Sifilis Boolean
+  Colera Boolean
+  // AGregar mas
+}
+
+model HistorialClinicoEnfermedad {
+  IdHistorialClinicoEnfermedad Int @id
+  IdHistorialClinico Int
+  IdEnfermedad Int
+}
+// ---------------------------------------------------------------
+
+model Medico {
+  IdMedico Int @id
+
+  // One to one relation with Usuario
+  Usuario Usuario @relation(fields: [IdUsuario], references: [IdUsuario])
+  IdUsuario Int @unique
+
+  // Many to one relation with Consulta
+  Consulta Consulta[]
+
+  // Propuesta: Agregar relacion con UnidadSalud para saber a que unidad de salud pertenece el medico
+  IdUnidadSalud Int
+}
+
+model Consulta {
+  IdConsulta Int @id
+
+  // Many to one relation with Medico
+  Medico Medico @relation(fields: [IdMedico], references: [IdMedico])
+  IdMedico Int
+
+  // Many to one relation with Paciente
+  Paciente Paciente @relation(fields: [IdPaciente], references: [IdPaciente])
+  IdPaciente Int
+
+  // Many to one relation with Expediente
+  Expediente Expediente @relation(fields: [IdExpediente], references: [IdExpediente])
+  IdExpediente Int
+
+  Fecha DateTime
+  Evaluacion String
+  Planes String
+}
+
+model ConsultaSignoVital {
+  IdConsultaSignoVital Int @id
+  IdConsulta Int
+}
+
+model Examen {
+  IdExamen Int @id
+}
+
+model Tratamiento {
+  IdTratamiento Int @id
+
+  // Many to one relation with Paciente
+  Paciente Paciente @relation(fields: [IdPaciente], references: [IdPaciente])
+  IdPaciente Int
+
+  Nombre String
+  UnidadTratamiento String
+  FechaInicio DateTime
+  FechaFin DateTime
+  Frecuencia String
+}
