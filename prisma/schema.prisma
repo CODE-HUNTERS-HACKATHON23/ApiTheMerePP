@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,404 +7,395 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// generator dbml {
-//   provider = "prisma-dbml-generator"
-// }
-
-// generator erd {
-//   provider = "prisma-erd-generator"
-//   output = "./diagram.pdf"
-// }
-
 model Rol {
-  IdRol Int @id
-  Nombre String
+  idRol Int @id
+  nombre String
 
   // One to many relation with usuario
-  Usuario Usuario[]
+  usuario Usuario[]
 }
 
 model Usuario {
   IdUsuario Int @id
   AvatarURI String
 
-  // Many to one relation with Rol
-  Rol Rol @relation(fields: [IdRol], references: [IdRol])
-  IdRol Int
+  // Many to one relation with rol
+  rol Rol @relation(fields: [idRol], references: [idRol])
+  idRol Int
 
-  Usuario String
-  Correo String @unique
-  Contrasena String
+  usuario String
+  correo String @unique
+  contrasena String
 
   // One to one relation with Paciente
-  Paciente Paciente?
+  paciente Paciente?
 
   // One to one relation with Medico
-  Medico Medico?
+  medico Medico?
 }
 
 model Departamento {
-  IdDepartamento Int @id
+  idDepartamento Int @id
 
   // Many to one relation with Municipio
-  Municipio Municipio[]
+  municipio Municipio[]
 
-  Nombre String
+  nombre String
 }
 
 model Municipio {
-  IdMunicipio Int @id
+  idMunicipio Int @id
 
   // Many to one relation with Departamento
-  Departamento Departamento @relation(fields: [IdDepartamento], references: [IdDepartamento])
-  IdDepartamento Int
+  departamento Departamento @relation(fields: [idDepartamento], references: [idDepartamento])
+  idDepartamento Int
 
   // Many to one relation with Paciente
-  Paciente Paciente[]
+  paciente Paciente[]
 
-  Nombre String
+  nombre String
 }
 
 model Paciente {
-  IdPaciente Int @id
+  idPaciente Int @id
 
   // One to one relation with usuario
-  Usuario Usuario @relation(fields: [IdUsuario], references: [IdUsuario])
-  IdUsuario Int @unique
+  usuario Usuario @relation(fields: [idUsuario], references: [IdUsuario])
+  idUsuario Int @unique
 
   // Many to one relation with Municipio
-  Municipio Municipio @relation(fields: [IdMunicipio], references: [IdMunicipio])
-  IdMunicipio Int
+  municipio Municipio @relation(fields: [idMunicipio], references: [idMunicipio])
+  idMunicipio Int
 
   // Many to one relation with Citas
-  Citas Cita[]
+  cita Cita[]
 
   // Many to one relation with Consulta
-  Consulta Consulta[]
+  consulta Consulta[]
 
   // Many to one relation with Tratamiento
-  Tratamiento Tratamiento[]
+  tratamiento Tratamiento[]
 
   // Many to one relation with SignoVital
-  PacienteSignoVital PacienteSignoVital[]
+  pacienteSignoVital PacienteSignoVital[]
 
   // One to one relation with Expediente
-  Expediente Expediente?
+  expediente Expediente?
 
   // Many to one relation with Vacunacion
-  Vacunacion Vacunacion[]
+  vacunacion Vacunacion[]
 
   // Many to one relation with OrdenExamen
-  OrdenExamen OrdenExamen[]
+  ordenExamen OrdenExamen[]
 
-  Cedula String
-  Nombres String
-  Apellidos String
-  Direccion String
-  NumeroInss String
-  Profesion String
-  FechaNacimiento DateTime
-  LugarNacimiento String
-  Sexo String
-  Telefono String
-  NombrePadre String
-  NombreMadre String
-  TipoSangre String
+  cedula String
+  nombres String
+  apellidos String
+  direccion String
+  numeroInss String
+  profesion String
+  fechaNacimiento DateTime
+  lugarNacimiento String
+  sexo String
+  telefono String
+  nombrePadre String
+  nombreMadre String
+  tipoSangre String
 }
 
 model UnidadSalud {
-  IdUnidadSalud Int @id
-  Nombre String
+  idUnidadSalud Int @id
+  nombre String
 
   // Many to one relation with Cita
-  Cita Cita[]
+  cita Cita[]
 
   // Many to one relation with Vacunas
-  Vacunacion Vacunacion[]
+  vacunacion Vacunacion[]
 
   // Many to one relation with Consulta
-  Consulta Consulta[]
+  consulta Consulta[]
 }
 
 model Cita {
-  IdCita Int @id
+  idCita Int @id
 
   // Many to one relation with Paciente
-  Paciente Paciente @relation(fields: [IdPaciente], references: [IdPaciente])
-  IdPaciente Int
+  paciente   Paciente @relation(fields: [idPaciente], references: [idPaciente])
+  idPaciente Int
 
   // Many to one relation with UnidadSalud
-  UnidadSalud UnidadSalud @relation(fields: [IdUnidadSalud], references: [IdUnidadSalud])
-  IdUnidadSalud Int
+  unidadSalud UnidadSalud @relation(fields: [idUnidadSalud], references: [idUnidadSalud])
+  idUnidadSalud Int
 
-  Fecha DateTime
-  Hora DateTime
+  fecha DateTime
+  hora DateTime
 }
 
 model SignoVital {
-  IdSignoVital Int @id
-  Fecha DateTime
-  Hora DateTime
-  Pulso Float
-  Temperatura Float
-  PresionArterial Float
-  FrecuenciaCardiaca Float
-  Orina String
-  Liquidos String
-  Peso Float
-  Respiracion String
+  idSignoVital Int @id
+  fecha DateTime
+  hora DateTime
+  pulso Float
+  temperatura Float
+  presionArterial Float
+  frecuenciaCardiaca Float
+  orina String
+  liquidos String
+  peso Float
+  respiracion String
 
   // One to one relation with PacienteSignoVital
-  PacienteSignoVital PacienteSignoVital?
+  pacienteSignoVital PacienteSignoVital?
 }
 
 model PacienteSignoVital {
-  IdPacienteSignoVital Int @id
+  idPacienteSignoVital Int @id
 
   // Many to one relation with Paciente
-  Paciente Paciente @relation(fields: [IdPaciente], references: [IdPaciente])
-  IdPaciente Int
+  paciente Paciente @relation(fields: [idPaciente], references: [idPaciente])
+  idPaciente Int
 
   // One to one relation with SignoVital
-  SignoVital SignoVital @relation(fields: [IdSignoVital], references: [IdSignoVital])
-  IdSignoVital Int @unique
+  signoVital SignoVital @relation(fields: [idSignoVital], references: [idSignoVital])
+  idSignoVital Int @unique
 
   // One to one relation with ConsultaSignoVital
-  ConsultaSignoVital ConsultaSignoVital?
+  consultaSignoVital ConsultaSignoVital?
 }
 
 model Expediente {
-  IdExpediente Int @id
+  idExpediente Int @id
 
   // One to one relation with Paciente
-  Paciente Paciente @relation(fields: [IdPaciente], references: [IdPaciente])
-  IdPaciente Int @unique
+  paciente Paciente @relation(fields: [idPaciente], references: [idPaciente])
+  idPaciente Int @unique
 
   // Many to one relation with Emergencia
-  Emergencia Emergencia[]
+  emergencia Emergencia[]
 
   // Many to one relation with HistorialClinico
-  HistorialClinico HistorialClinico[]
+  historialClinico HistorialClinico[]
 
   // Many to one relation with Consulta
-  Consulta Consulta[]
+  consulta Consulta[]
 
-  NumeroExpediente String
-  FechaCreacion DateTime
-  FechaModificacion DateTime
+  numeroExpediente String
+  fechaCreacion DateTime
+  fechaModificacion DateTime
 }
 
 model Emergencia {
-  IdEmergencia Int @id
-  VehiculoMotorizado Boolean
-  OtroTransporte Boolean
-  Caida Boolean
-  Maquinaria Boolean
-  EfectosTardios Boolean
-  FenomenoNatural Boolean
-  AsaltOAgresion Boolean
-  IntentoSuicidio Boolean
-  IncendioExplosion Boolean
-  Otro Boolean
+  idEmergencia Int @id
+  vehiculoMotorizado Boolean
+  otroTransporte Boolean
+  caida Boolean
+  maquinaria Boolean
+  efectosTardios Boolean
+  fenomenoNatural Boolean
+  asaltOAgresion Boolean
+  intentoSuicidio Boolean
+  incendioExplosion Boolean
+  otro Boolean
 
   //Lugar
-  Trabajo Boolean
-  Vivienda Boolean
-  CentroEstudio Boolean
-  CentroMedico Boolean
-  ViaPublica Boolean
-  DeporteDive Boolean
-  OtroLugar Boolean
+  trabajo Boolean
+  vivienda Boolean
+  centroEstudio Boolean
+  centroMedico Boolean
+  viaPublica Boolean
+  deporteDive Boolean
+  otroLugar Boolean
 
-  Fecha DateTime
-  Hora DateTime
-  ResumenClinico String
-  ExamenFisico String
-  Diagnostico String
-  Planes String
+  fecha DateTime
+  hora DateTime
+  resumenClinico String
+  examenFisico String
+  diagnostico String
+  planes String
 
-  Fallecido Boolean
-  Abandono Boolean
-  Alta Boolean
+  fallecido Boolean
+  abandono Boolean
+  alta Boolean
 
   // Many to one relation with Expediente
-  Expediente Expediente @relation(fields: [IdExpediente], references: [IdExpediente])
-  IdExpediente Int
+  expediente Expediente @relation(fields: [idExpediente], references: [idExpediente])
+  idExpediente Int
 }
 
 model TipoEnfermedad {
-  IdTipoEnfermedad Int @id
-  TipoEnfermedad String
+  idTipoEnfermedad Int @id
+  tipoEnfermedad String
 
   // One to many relation with Enfermedad
-  Enfermedad Enfermedad[]
+  enfermedad Enfermedad[]
 }
 
 model Enfermedad {
-  IdEnfermedad Int @id
+  idEnfermedad Int @id
 
   // Many to one relation with TipoEnfermedad
-  TipoEnfermedad TipoEnfermedad @relation(fields: [IdTipoEnfermedad], references: [IdTipoEnfermedad])
-  IdTipoEnfermedad Int
+  tipoEnfermedad TipoEnfermedad @relation(fields: [idTipoEnfermedad], references: [idTipoEnfermedad])
+  idTipoEnfermedad Int
 
   // Many to one relation with HistorialClinicoEnfermedad
-  HistorialClinicoEnfermedad HistorialClinicoEnfermedad[]
+  historialClinicoEnfermedad HistorialClinicoEnfermedad[]
 
-  Nombre String
+  nombre String
 }
 
 model Vacunacion {
-  IdVacunacion Int @id
+  idVacunacion Int @id
 
   // One to many relation with Paciente
-  Paciente Paciente @relation(fields: [IdPaciente], references: [IdPaciente])
-  IdPaciente Int
+  paciente Paciente @relation(fields: [idPaciente], references: [idPaciente])
+  idPaciente Int
 
   // One to many relation with UnidadSalud
-  UnidadSalud UnidadSalud @relation(fields: [IdUnidadSalud], references: [IdUnidadSalud])
-  IdUnidadSalud Int
+  unidadSalud UnidadSalud @relation(fields: [idUnidadSalud], references: [idUnidadSalud])
+  idUnidadSalud Int
 
-  NombreVacuna String
-  FechaVacunacion DateTime
-  FechaProximaVacunacion DateTime
+  nombreVacuna String
+  fechaVacunacion DateTime
+  fechaProximaVacunacion DateTime
 }
 
 model HistorialClinico {
-  IdHistorialClinico Int @id
+  idHistorialClinico Int @id
 
   // Many to one relation with Expediente
-  Expediente   Expediente @relation(fields: [IdExpediente], references: [IdExpediente])
-  IdExpediente Int
+  expediente   Expediente @relation(fields: [idExpediente], references: [idExpediente])
+  idExpediente Int
 
-  MotivoConsulta  String
-  HorasSueno      Int
-  ActividadFisica String
-  Alimentacion    String
+  motivoConsulta  String
+  horasSueno      Int
+  actividadFisica String
+  alimentacion    String
 
-  Tabaco                                String
-  Drogas                                String
-  Farmacos                              String
-  HistoriaEnfermedadActual              String
-  EnfermedadesInfectoContagiosasPrevias String
-  EnfermedadesCronicas                  String
-  CirugiasPreviasRealizadas             String
-  Hospitalizaciones                     String
-  AspectoGeneral                        String
-  PielYMucosas                          String
-  CabezaYCuello                         String
-  Torax                                 String
+  tabaco                                String
+  drogas                                String
+  farmacos                              String
+  historiaEnfermedadActual              String
+  enfermedadesInfectoContagiosasPrevias String
+  enfermedadesCronicas                  String
+  cirugiasPreviasRealizadas             String
+  hospitalizaciones                     String
+  aspectoGeneral                        String
+  pielYMucosas                          String
+  cabezaYCuello                         String
+  torax                                 String
 
   // One to one relation with HistorialClinicoEnfermedad
-  HistorialClinicoEnfermedad HistorialClinicoEnfermedad?
+  historialClinicoEnfermedad HistorialClinicoEnfermedad?
 }
 
 model HistorialClinicoEnfermedad {
-  IdHistorialClinicoEnfermedad Int @id
+  idHistorialClinicoEnfermedad Int @id
 
   // One to one relation with HistorialClinico
-  HistorialClinico HistorialClinico @relation(fields: [IdHistorialClinico], references: [IdHistorialClinico])
-  IdHistorialClinico Int @unique
+  historialClinico HistorialClinico @relation(fields: [idHistorialClinico], references: [idHistorialClinico])
+  idHistorialClinico Int @unique
 
   // Many to many relation with Enfermedad
-  Enfermedad Enfermedad[]
+  enfermedad Enfermedad[]
 }
 
 model Especialidad {
-  IdEspecialidad Int @id
-  Nombre String
+  idEspecialidad Int @id
+  nombre String
 
   // Many to one relation with Medico
-  Medico Medico[]
+  medico Medico[]
 }
 
 model Medico {
-  IdMedico Int @id
+  idMedico Int @id
 
   // One to one relation with usuario
-  Usuario Usuario @relation(fields: [IdUsuario], references: [IdUsuario])
-  IdUsuario Int @unique
+  usuario Usuario @relation(fields: [idUsuario], references: [IdUsuario])
+  idUsuario Int @unique
 
   // Many to one relation with Consulta
-  Consulta Consulta[]
+  consulta Consulta[]
 
   // Many to one relation with Especialidad
-  Especialidad Especialidad @relation(fields: [IdEspecialidad], references: [IdEspecialidad])
-  IdEspecialidad Int
+  especialidad Especialidad @relation(fields: [idEspecialidad], references: [idEspecialidad])
+  idEspecialidad Int
 }
 
 model Consulta {
-  IdConsulta Int @id
+  idConsulta Int @id
 
   // Many to one relation with Medico
-  Medico Medico @relation(fields: [IdMedico], references: [IdMedico])
-  IdMedico Int
+  medico Medico @relation(fields: [idMedico], references: [idMedico])
+  idMedico Int
 
   // Many to one relation with Paciente
-  Paciente Paciente @relation(fields: [IdPaciente], references: [IdPaciente])
-  IdPaciente Int
+  paciente Paciente @relation(fields: [idPaciente], references: [idPaciente])
+  idPaciente Int
 
   // Many to one relation with Expediente
-  Expediente Expediente @relation(fields: [IdExpediente], references: [IdExpediente])
-  IdExpediente Int
+  expediente Expediente @relation(fields: [idExpediente], references: [idExpediente])
+  idExpediente Int
 
   // Many to one relation with Unidad Salud
-  UnidadSalud UnidadSalud @relation(fields: [IdUnidadSalud], references: [IdUnidadSalud])
-  IdUnidadSalud Int
+  unidadSalud UnidadSalud @relation(fields: [idUnidadSalud], references: [idUnidadSalud])
+  idUnidadSalud Int
 
   // One to one relation with ConsultaSignoVital
-  ConsultaSignoVital ConsultaSignoVital?
+  consultaSignoVital ConsultaSignoVital?
 
-  Fecha DateTime
-  Evaluacion String
-  Planes String
+  fecha DateTime
+  evaluacion String
+  planes String
 }
 
 model ConsultaSignoVital {
-  IdConsultaSignoVital Int @id
+  idConsultaSignoVital Int @id
 
   // One to one relation with Consulta
-  Consulta Consulta @relation(fields: [IdConsulta], references: [IdConsulta])
-  IdConsulta Int @unique
+  consulta Consulta @relation(fields: [idConsulta], references: [idConsulta])
+  idConsulta Int @unique
 
   // One to one relation with PacienteSignoVital
-  PacienteSignoVital PacienteSignoVital @relation(fields: [IdPacienteSignoVital], references: [IdPacienteSignoVital])
-  IdPacienteSignoVital Int @unique
+  pacienteSignoVital PacienteSignoVital @relation(fields: [idPacienteSignoVital], references: [idPacienteSignoVital])
+  idPacienteSignoVital Int @unique
 }
 
 model Examen {
-  IdExamen Int @id
-  Nombre String
+  idExamen Int @id
+  nombre String
 
   // One to many relation with OrdenExamen
-  OrdenExamen OrdenExamen[]
+  ordenExamen OrdenExamen[]
 }
 
 model OrdenExamen {
-  IdOrdenExamen Int @id
+  idOrdenExamen Int @id
 
   //One to many relation with Paciente
-  Paciente Paciente @relation(fields: [IdPaciente], references: [IdPaciente])
-  IdPaciente Int
+  paciente Paciente @relation(fields: [idPaciente], references: [idPaciente])
+  idPaciente Int
 
   // One to many relation with Examen
-  Examen Examen @relation(fields: [IdExamen], references: [IdExamen])
-  IdExamen Int
+  examen Examen @relation(fields: [idExamen], references: [idExamen])
+  idExamen Int
 
-  Resultado String
+  resultado String
 }
 
 
 model Tratamiento {
-  IdTratamiento Int @id
+  idTratamiento Int @id
 
   // Many to one relation with Paciente
-  Paciente Paciente @relation(fields: [IdPaciente], references: [IdPaciente])
-  IdPaciente Int
+  paciente Paciente @relation(fields: [idPaciente], references: [idPaciente])
+  idPaciente Int
 
-  Nombre String
-  UnidadTratamiento String
-  Dosis String
-  FechaInicio DateTime
-  FechaFin DateTime
-  Frecuencia String
+  nombre String
+  unidadTratamiento String
+  dosis String
+  fechaInicio DateTime
+  fechaFin DateTime
+  frecuencia String
 }

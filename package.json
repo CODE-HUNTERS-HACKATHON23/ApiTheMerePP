@@ -19,7 +19,6 @@
     "@typescript-eslint/eslint-plugin": "^6.7.5",
     "@typescript-eslint/parser": "^6.7.5",
     "commitlint": "^17.7.2",
-    "commitlint-config-gitmoji": "^2.3.1",
     "eslint": "^8.51.0",
     "husky": "^8.0.3",
     "prettier": "^3.0.3",
@@ -27,6 +26,7 @@
     "prisma-erd-generator": "^1.11.1"
   },
   "dependencies": {
+    "@commitlint/config-conventional": "^17.8.0",
     "@nestjs/common": "^10.2.7",
     "@nestjs/core": "^10.2.7",
     "@nestjs/jwt": "^10.1.1",
