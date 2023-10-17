@@ -14,28 +14,29 @@ datasource db {
 //   provider = "prisma-dbml-generator"
 // }
 
-generator erd {
-  provider = "prisma-erd-generator"
-  output = "./diagram.pdf"
-}
+// generator erd {
+//   provider = "prisma-erd-generator"
+//   output = "./diagram.pdf"
+// }
 
 model Rol {
   IdRol Int @id
   Nombre String
 
-  // One to many relation with Usuario
+  // One to many relation with usuario
   Usuario Usuario[]
 }
 
 model Usuario {
   IdUsuario Int @id
+  AvatarURI String
 
   // Many to one relation with Rol
   Rol Rol @relation(fields: [IdRol], references: [IdRol])
   IdRol Int
 
   Usuario String
-  Correo String
+  Correo String @unique
   Contrasena String
 
   // One to one relation with Paciente
@@ -70,7 +71,7 @@ model Municipio {
 model Paciente {
   IdPaciente Int @id
 
-  // One to one relation with Usuario
+  // One to one relation with usuario
   Usuario Usuario @relation(fields: [IdUsuario], references: [IdUsuario])
   IdUsuario Int @unique
 
@@ -322,7 +323,7 @@ model Especialidad {
 model Medico {
   IdMedico Int @id
 
-  // One to one relation with Usuario
+  // One to one relation with usuario
   Usuario Usuario @relation(fields: [IdUsuario], references: [IdUsuario])
   IdUsuario Int @unique
 
