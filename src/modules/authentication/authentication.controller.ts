@@ -1,4 +1,10 @@
-import { Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Post,
+    Put,
+    UnauthorizedException,
+} from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { RegisterDTO } from './dto/register.dto';
 import { LoginDTO } from './dto/login.dto';
@@ -37,10 +43,9 @@ export class AuthenticationController {
         description: 'Retorna el token de acceso',
         type: AcessTokenDTO,
     })
-    @Post('register')
+    @Put('register')
     async register(@Body() body: RegisterDTO) {
         const user = await this.usuarioService.create(body);
-
         return this.authenticationService.generateToken({
             idUsuario: user.idUsuario,
             correo: user.correo,
