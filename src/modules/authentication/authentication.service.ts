@@ -12,12 +12,7 @@ export class AuthenticationService {
 
     generateToken(user: JWTPayloadDTO) {
         return {
-            accessToken: this.jwtService.sign({
-                id: user.idUsuario,
-                usuario: user.usuario,
-                email: user.correo,
-                rol: user.rol,
-            }),
+            accessToken: this.jwtService.sign(user),
         };
     }
 
