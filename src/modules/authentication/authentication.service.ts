@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import bcrypt from 'bcrypt';
 import { UsuarioService } from '../usuario/usuario.service';
-import { Usuario } from '@prisma/client';
+import { JWTPayloadDTO } from './dto/jwtPayload.dto';
 
 @Injectable()
 export class AuthenticationService {
@@ -11,11 +10,13 @@ export class AuthenticationService {
         private usuarioService: UsuarioService
     ) {}
 
-    generateToken(user: Usuario) {
+    generateToken(user: JWTPayloadDTO) {
         return {
             accessToken: this.jwtService.sign({
-                id: user.IdUsuario,
-                email: user.Correo,
+                id: user.idUsuario,
+                usuario: user.usuario,
+                email: user.correo,
+                rol: user.rol,
             }),
         };
     }
@@ -27,14 +28,15 @@ export class AuthenticationService {
         password: string;
         hash: string;
     }) {
-        return bcrypt.compare(password, hash);
+        //return bcrypt.compare(password, hash);
+        return password === hash;
     }
 
     async validate({ email, password }: { email: string; password: string }) {
         const user = await this.usuarioService.get({ email });
 
         if (!user) return null;
-        return (await this.comparePassword({ password, hash: user.Contrasena }))
+        return (await this.comparePassword({ password, hash: user.contrasena }))
             ? user
             : null;
     }
