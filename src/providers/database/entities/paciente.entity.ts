@@ -1,8 +1,7 @@
 import { Paciente } from '@prisma/client';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
-import { IsDate, IsInt, IsString } from 'class-validator';
-import { Optional } from '@nestjs/common';
+import { Expose, Type } from 'class-transformer';
+import { IsDate, IsInt, IsOptional, IsString } from 'class-validator';
 
 export class PacienteEntity implements Paciente {
     @ApiProperty({
@@ -18,8 +17,8 @@ export class PacienteEntity implements Paciente {
         type: String,
     })
     @Expose()
-    @Optional()
     @IsString()
+    @IsOptional()
     cedula: string | null;
 
     @ApiProperty({
@@ -34,6 +33,7 @@ export class PacienteEntity implements Paciente {
     })
     @Expose()
     @IsDate()
+    @Type(() => Date)
     fechaNacimiento: Date;
 
     @ApiProperty({
@@ -71,7 +71,7 @@ export class PacienteEntity implements Paciente {
     })
     @Expose()
     @IsString()
-    @Optional()
+    @IsOptional()
     nombreMadre: string | null;
 
     @ApiPropertyOptional({
@@ -81,6 +81,7 @@ export class PacienteEntity implements Paciente {
     })
     @Expose()
     @IsString()
+    @IsOptional()
     nombrePadre: string | null;
 
     @ApiProperty({
@@ -97,7 +98,7 @@ export class PacienteEntity implements Paciente {
     })
     @Expose()
     @IsString()
-    @Optional()
+    @IsOptional()
     numeroInss: string | null;
 
     @ApiProperty({

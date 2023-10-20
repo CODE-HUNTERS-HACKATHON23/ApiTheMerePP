@@ -2,7 +2,6 @@ import { Usuario } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { IsEmail, IsString } from 'class-validator';
-import { Optional } from '@nestjs/common';
 
 export class UsuarioEntity implements Usuario {
     @ApiProperty({
@@ -11,7 +10,6 @@ export class UsuarioEntity implements Usuario {
     })
     @Expose()
     @IsString()
-    @Optional()
     AvatarURI: string | null;
 
     @ApiProperty({
