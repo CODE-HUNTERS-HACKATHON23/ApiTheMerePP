@@ -9,6 +9,7 @@ export class UsuarioDTO extends OmitType(UsuarioEntity, ['idRol']) {
     @ApiProperty({
         description: 'Rol del usuario',
         type: RolInUsuario,
+        nullable: true,
     })
     @Type(() => RolInUsuario)
     @Expose()
