@@ -1,6 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { DatabaseService } from '../../providers/database/database.service';
 import { RegisterDTO } from '../authentication/dto/register.dto';
+import bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsuarioService {
@@ -24,11 +25,13 @@ export class UsuarioService {
 
         const { usuario, correo, contrasena, ...paciente } = body;
 
+        const salt = await bcrypt.genSalt(5);
+        const hashedPassword = await bcrypt.hash(contrasena, salt);
         return this.database.usuario.create({
             data: {
                 usuario,
                 correo,
-                contrasena,
+                contrasena: hashedPassword,
                 paciente: {
                     create: paciente,
                 },

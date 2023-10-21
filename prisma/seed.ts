@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
 
 (async () => {
     const prisma = new PrismaClient();
@@ -39,6 +40,9 @@ import { PrismaClient } from '@prisma/client';
         },
     });
 
+    const salt = await bcrypt.genSalt(5);
+    const hashedPassword = await bcrypt.hash('securepassword', salt);
+
     //Create medico
     await prisma.usuario.create({
         data: {
@@ -54,7 +58,7 @@ import { PrismaClient } from '@prisma/client';
                 },
             },
             idRol: 1,
-            contrasena: 'securepassword',
+            contrasena: hashedPassword,
         },
     });
 
@@ -84,7 +88,7 @@ import { PrismaClient } from '@prisma/client';
                 },
             },
             idRol: 2,
-            contrasena: 'securepassword',
+            contrasena: hashedPassword,
         },
     });
 

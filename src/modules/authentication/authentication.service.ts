@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsuarioService } from '../usuario/usuario.service';
 import { JWTPayloadDTO } from './dto/jwtPayload.dto';
+import bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthenticationService {
@@ -23,8 +24,7 @@ export class AuthenticationService {
         password: string;
         hash: string;
     }) {
-        //return bcrypt.compare(password, hash);
-        return password === hash;
+        return bcrypt.compare(password, hash);
     }
 
     async validate({ email, password }: { email: string; password: string }) {

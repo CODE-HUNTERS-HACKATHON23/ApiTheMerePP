@@ -5,10 +5,18 @@ import { CreateTratamientoDTO } from './dto/createTratamiento.dto';
 @Injectable()
 export class PacienteService {
     constructor(private readonly databaseService: DatabaseService) {}
-    getTratamientos(data: { idUsuario: number }) {
+    async getTratamientos(data: { idUsuario: number }) {
+        const paciente = await this.databaseService.paciente.findUnique({
+            where: {
+                idUsuario: data.idUsuario,
+            },
+        });
+
+        if (!paciente) throw new HttpException('El paciente no existe', 404);
+
         return this.databaseService.tratamiento.findMany({
             where: {
-                idPaciente: data.idUsuario,
+                idPaciente: paciente.idPaciente,
             },
         });
     }
@@ -17,6 +25,8 @@ export class PacienteService {
         idUsuario: number;
         tratamiento: CreateTratamientoDTO;
     }) {
+        console.log(data.idUsuario);
+
         const paciente = await this.databaseService.paciente.findUnique({
             where: {
                 idUsuario: data.idUsuario,
