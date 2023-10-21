@@ -114,7 +114,7 @@ model Expediente {
   idPaciente        Int                @unique
   numeroExpediente  String
   fechaCreacion     DateTime           @default(now())
-  fechaModificacion DateTime
+  fechaModificacion DateTime?          @updatedAt
   consultas         Consulta[]
   emergencias       Emergencia[]
   paciente          Paciente           @relation(fields: [idPaciente], references: [idPaciente])
