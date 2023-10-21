@@ -8,7 +8,7 @@ export const RoleGuard = (role: string) => {
                 .switchToHttp()
                 .getRequest();
 
-            return user.rol !== role;
+            return user.rol === role;
         }
     }
 
