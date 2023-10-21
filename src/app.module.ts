@@ -6,7 +6,12 @@ import { PacienteModule } from './modules/paciente/paciente.module';
 import { MedicoModule } from './modules/medico/medico.module';
 
 @Module({
-    imports: [DatabaseModule, UsuarioModule, AuthenticationModule],
+    imports: [
+        DatabaseModule,
+        UsuarioModule,
+        AuthenticationModule,
         PacienteModule,
+        MedicoModule,
+    ],
 })
 export class AppModule {}

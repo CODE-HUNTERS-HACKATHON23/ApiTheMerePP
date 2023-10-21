@@ -1,29 +1,11 @@
-import { HttpException, Injectable } from '@nestjs/common';
-import { DatabaseService } from '../../providers/database/database.service';
+import { Injectable } from '@nestjs/common';
+import { SearchDTO } from './dto/search.dto';
+import { PacienteService } from '../paciente/paciente.service';
 
 @Injectable()
 export class MedicoService {
-    constructor(private readonly databaseService: DatabaseService) {}
-    getMedicoPacientes(param: { idPaciente: number; idUsuario: number }) {
-        const medico = this.databaseService.medico.findUnique({
-            where: {
-                idUsuario: param.idUsuario,
-            },
-        });
-
-        if (!medico) throw new HttpException('El medico no existe', 404);
-
-        // return pacientes where there is almost one consulta with the medico
-        return this.databaseService.paciente.findMany({
-            where: {
-                consultas: {
-                    some: {
-                        medico: {
-                            idUsuario: param.idUsuario,
-                        },
-                    },
-                },
-            },
-        });
+    constructor(private readonly pacienteService: PacienteService) {}
+    getMedicoPaciente(data: SearchDTO) {
+        return this.pacienteService.getAllData(data);
     }
 }
