@@ -32,4 +32,18 @@ export class PacienteService {
             },
         });
     }
+
+    getAllData(data: { nombres: string; apellidos: string }) {
+        console.log(data);
+        return this.databaseService.paciente.findFirst({
+            where: {
+                nombres: data.nombres,
+                apellidos: data.apellidos,
+            },
+            include: {
+                consultas: true,
+                tratamientos: true,
+            },
+        });
+    }
 }
